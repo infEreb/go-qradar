@@ -328,7 +328,7 @@ func CheckResponse(r *http.Response) error {
 // ErrorMessage represents generic error message by the QRadar API.
 type ErrorMessage struct {
 	resp        *http.Response
-	Code        json.Number `json:"code,omitempty"`
+	Code        string `json:"code,omitempty"`
 	Contexts    []string    `json:"contexts,omitempty"`
 	Message     string      `json:"message,omitempty"`
 	Description string      `json:"description,omitempty"`
