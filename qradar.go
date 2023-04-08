@@ -99,6 +99,7 @@ type service struct {
 
 // NewClient returns a new QRadar API client.
 func NewClient(baseurl string, opts ...func(*Client) error) (*Client, error) {
+	fmt.Println("New client created")
 	u, err := url.Parse(baseurl)
 	if err != nil {
 		return nil, err
@@ -328,11 +329,11 @@ func CheckResponse(r *http.Response) error {
 // ErrorMessage represents generic error message by the QRadar API.
 type ErrorMessage struct {
 	resp        *http.Response
-	Code        string `json:"code,omitempty"`
-	Contexts    []string    `json:"contexts,omitempty"`
-	Message     string      `json:"message,omitempty"`
-	Description string      `json:"description,omitempty"`
-	Severity    string      `json:"severity,omitempty"`
+	Code        string   `json:"code,omitempty"`
+	Contexts    []string `json:"contexts,omitempty"`
+	Message     string   `json:"message,omitempty"`
+	Description string   `json:"description,omitempty"`
+	Severity    string   `json:"severity,omitempty"`
 	Details     struct {
 		Reason      string `json:"reason,omitempty"`
 		Code        int    `json:"code,omitempty"`
