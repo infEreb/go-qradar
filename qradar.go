@@ -99,7 +99,7 @@ type service struct {
 
 // NewClient returns a new QRadar API client.
 func NewClient(baseurl string, opts ...func(*Client) error) (*Client, error) {
-	fmt.Println("New client created")
+	// fmt.Println("New client created")
 	u, err := url.Parse(baseurl)
 	if err != nil {
 		return nil, err
