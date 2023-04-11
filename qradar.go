@@ -317,7 +317,11 @@ func CheckResponse(r *http.Response) error {
 		var v ErrorMessage
 		err := json.NewDecoder(r.Body).Decode(&v)
 		if err != nil {
-			return fmt.Errorf("%s %d: %s", r.Request.URL.Path, r.StatusCode, err.Error())
+			var vd ErrorMessageDeleting
+			err = json.NewDecoder(r.Body).Decode(&vd)
+			if err != nil {
+				return fmt.Errorf("%s %d: %s", r.Request.URL.Path, r.StatusCode, err.Error())
+			}
 		}
 		v.resp = r
 		return &v
@@ -328,6 +332,24 @@ func CheckResponse(r *http.Response) error {
 
 // ErrorMessage represents generic error message by the QRadar API.
 type ErrorMessage struct {
+	resp        *http.Response
+	Code        json.Number `json:"code,omitempty"`
+	Contexts    []string    `json:"contexts,omitempty"`
+	Message     string      `json:"message,omitempty"`
+	Description string      `json:"description,omitempty"`
+	Severity    string      `json:"severity,omitempty"`
+	Details     struct {
+		Reason      string `json:"reason,omitempty"`
+		Code        int    `json:"code,omitempty"`
+		StartIndex  int    `json:"start_index,omitempty"`
+		LineNumber  int    `json:"line_number,omitempty"`
+		QueryString string `json:"query_string,omitempty"`
+		TokenText   string `json:"token_text,omitempty"`
+	} `json:"details,omitempty"`
+}
+
+// ErrorMessage represents generic error message by the QRadar API.
+type ErrorMessageDeleting struct {
 	resp        *http.Response
 	Code        string   `json:"code,omitempty"`
 	Contexts    []string `json:"contexts,omitempty"`
