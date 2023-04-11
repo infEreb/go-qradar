@@ -315,12 +315,15 @@ func CheckResponse(r *http.Response) error {
 	case http.StatusNotFound, http.StatusConflict, http.StatusUnprocessableEntity, http.StatusBadRequest,
 		http.StatusInternalServerError, http.StatusServiceUnavailable, http.StatusForbidden:
 		var v ErrorMessage
+		var vd ErrorMessageDeleting
 		err := json.NewDecoder(r.Body).Decode(&v)
 		if err != nil {
-			var vd ErrorMessageDeleting
-			err = json.NewDecoder(r.Body).Decode(&vd)
-			if err != nil {
-				return fmt.Errorf("%s %d: %s", r.Request.URL.Path, r.StatusCode, err.Error())
+			errD := json.NewDecoder(r.Body).Decode(&vd)
+			if errD != nil {
+				return fmt.Errorf("%s %d: %s - %s", r.Request.URL.Path, r.StatusCode, err.Error(), errD.Error())
+			} else {
+				vd.resp = r
+				return &vd
 			}
 		}
 		v.resp = r
@@ -368,6 +371,14 @@ type ErrorMessageDeleting struct {
 
 // Error satisfies the error interface.
 func (e *ErrorMessage) Error() string {
+	return fmt.Sprintf(
+		"%s %d: %s [%s]",
+		e.resp.Request.URL.Path, e.resp.StatusCode, e.Message, string(e.Code),
+	)
+}
+
+// Error satisfies the error interface.
+func (e *ErrorMessageDeleting) Error() string {
 	return fmt.Sprintf(
 		"%s %d: %s [%s]",
 		e.resp.Request.URL.Path, e.resp.StatusCode, e.Message, string(e.Code),
